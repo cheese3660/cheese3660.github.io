@@ -10,7 +10,7 @@ function clear() {
 const CONDITION_START = -3*Math.PI/4;
 const RUNE_MARGIN = 1.05;
 var font = {};
-fetch("https://raw.githubusercontent.com/cheese3660/cheese3660.github.io/main/font.json",{"cache": "no-store"})
+fetch("https://raw.githubusercontent.com/cheese3660/cheese3660.github.io/main/font.json", {cache: "no-store"})
     .then(response => response.json())
     .then(json => {font = json;});
 function triplets(word) {
@@ -94,7 +94,7 @@ function createSigil() {
         ctx.stroke();
         ctx.lineWidth = 2;
         //for testing reasons
-        ctx.strokeStyle = 'rgb(255,255,255)';
+        // ctx.strokeStyle = 'rgb(255,255,255)';
         var current_angle = CONDITION_START + step_angle;
         for (var i = 0; i < condition_runes.length; i++) {
             var rune = condition_runes[i];
@@ -150,6 +150,9 @@ function getRadialPoint(radius, center, angle, size, x, y) {
     //1 is the rightmost/bottommost point
     var cos = Math.cos(angle);
     var sin = Math.sin(angle);
+    var t = x;
+    x = y;
+    y = t;
     x -= 0.5;
     y -= 0.5;
     x *= size;
@@ -186,14 +189,12 @@ function drawRadialSubRune(ctx, subrune, radius, center, angle, size) {
             var char = font[subrune];
             for (var i = 0; i < char.length; i++) {
                 var stroke = char[i];
-                console.log(stroke);
                 ctx.beginPath();
                 if (stroke.type == "arc") {
                     var center = getRadialPoint(radius,center,angle,size,stroke.x,stroke.y);
-                    var theta = (-stroke.theta)*Math.PI/180;
+                    var theta = (-(stroke.theta-90))*Math.PI/180;
                     var len = (-stroke.length)*Math.PI/180;
                     var ccw = len < 0;
-                    console.log("ARC: ",center,stroke.radius,theta,len,ccw);
                     theta += angle;
                     if (ccw) {
                         ctx.arc(center.x,center.y,stroke.radius*size,theta+len,theta);
