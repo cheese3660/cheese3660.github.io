@@ -9,7 +9,10 @@ function clear() {
 
 const CONDITION_START = -3*Math.PI/4;
 const RUNE_MARGIN = 1.05;
-var font = require("font.json");
+var font = {};
+fetch("font.json")
+    .then(response => response.json())
+    .then(json => {console.log(json); font = json});
 function splitRunes(runes) {
     runes = runes.toUpperCase();
     runes = runes.split('.');
