@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <script src="./page.js"></script>
+</head>
+
+<body onload="clear();">
+    <div id="input_div">
+        <p>
+            When writing words seperate syllables with '.'
+        </p>
+        <p>Condition:</p>
+        <input type="text" id="condition" placeholder = "when int.er.act.ed with">
+        <p>Action:</p>
+        <input type="text" id="action" placeholder = "ex.plode">
+    </div>
+    <div id="button_div">
+        <button type="button" onclick="createSigil();">Create Sigil</button>
+    </div>
+    <div id="canvas_div">
+        <canvas id="canvas" width=1024 height=1024>
+            Resulting Sigil
+        </canvas>
+    </div>
+</body>
+
+</html>
