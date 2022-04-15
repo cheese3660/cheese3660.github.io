@@ -10,7 +10,7 @@ function clear() {
 const CONDITION_START = -3*Math.PI/4;
 const RUNE_MARGIN = 1.05;
 var font = {};
-fetch("font.json")
+fetch("https://raw.githubusercontent.com/cheese3660/cheese3660.github.io/main/font.json")
     .then(response => response.json())
     .then(json => {console.log(json); font = json});
 function splitRunes(runes) {
