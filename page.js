@@ -10,7 +10,7 @@ function clear() {
 const CONDITION_START = -3*Math.PI/4;
 const RUNE_MARGIN = 1.05;
 var font = {};
-fetch("https://raw.githubusercontent.com/cheese3660/cheese3660.github.io/main/font.json")
+fetch("https://raw.githubusercontent.com/cheese3660/cheese3660.github.io/main/font.json",{"cache": "no-store"})
     .then(response => response.json())
     .then(json => {font = json;});
 function triplets(word) {
@@ -186,18 +186,18 @@ function drawRadialSubRune(ctx, subrune, radius, center, angle, size) {
             var char = font[subrune];
             for (var i = 0; i < char.length; i++) {
                 var stroke = char[i];
+                console.log(stroke);
                 ctx.beginPath();
                 if (stroke.type == "arc") {
                     var center = getRadialPoint(radius,center,angle,size,stroke.x,stroke.y);
-                    var theta = (-stroke.theta)*180/Math.PI;
-                    var len = (-stroke.length)*180/Math.PI;
+                    var theta = (-stroke.theta)*Math.PI/180;
+                    var len = (-stroke.length)*Math.PI/180;
                     var ccw = len < 0;
+                    console.log("ARC: ",center,stroke.radius,theta,len,ccw);
                     theta += angle;
                     if (ccw) {
-                        console.log("ARC: ", center.x,center.y,stroke.radius*size,theta+len,theta);
                         ctx.arc(center.x,center.y,stroke.radius*size,theta+len,theta);
                     } else {
-                        console.log("ARC: ", center.x,center.y,stroke.radius*size,theta,theta+len);
                         ctx.arc(center.x,center.y,stroke.radius*size,theta,theta+len);
                     }
                 } else if (stroke.type == "line") {
