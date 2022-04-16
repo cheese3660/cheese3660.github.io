@@ -9,6 +9,8 @@ function clear() {
 
 // const CONDITION_START = -3*Math.PI/4;
 const RUNE_MARGIN = 1.05;
+const MAROON = 'rgb(153,0,0)';
+const CRIMSON = 'rgb(220,20,60)';
 var font = {};
 fetch("https://raw.githubusercontent.com/cheese3660/cheese3660.github.io/main/font.json")
     .then(response => response.json())
@@ -353,6 +355,189 @@ fetch("https://raw.githubusercontent.com/cheese3660/cheese3660.github.io/main/fo
 //         }
 //     ]
 // };
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function xor(a,b) {
+    return a? !b : b;
+}
+function coterminal(x) {
+    var check = x % (2 * Math.PI);
+    return check < 0 ? 2*Math.PI + check : check;
+}
+
+async function animate_arc(ctx, stroke, pps) {
+    var prev_st = 0;
+    var prev_et = 0;
+    var steps;
+    var dtheta;
+    var pixels_per_frame = pps/60;
+    if (pixels_per_frame < 3) pixels_per_frame = 3;
+    var start = coterminal(stroke.start);
+    var end = coterminal(stroke.end);
+    if (start >= end) end += 2 *Math.PI;
+    var len = Math.abs((end-start) * stroke.radius);
+    var steps = Math.floor(len/pixels_per_frame);
+    var dtheta = (end-start) / steps;
+    var x = stroke.x;
+    var y = stroke.y;
+    var r = stroke.radius;
+    var invert = end < start;
+    for (var i = 0; i < steps; i++) {
+        if (i == 0) {
+            prev_st = stroke.start;
+            prev_et = prev_st+dtheta;
+            ctx.strokeStyle = CRIMSON;
+            ctx.beginPath();
+            ctx.arc(x,y,r,prev_st,prev_et,invert);
+            ctx.stroke();
+        } else {
+            ctx.strokeStyle = MAROON;
+            ctx.beginPath();
+            ctx.arc(x,y,r,prev_st,prev_et,invert);
+            ctx.stroke();
+            prev_st = prev_et;
+            prev_et += dtheta;
+            ctx.strokeStyle = CRIMSON;
+            ctx.beginPath();
+            ctx.arc(x,y,r,prev_st,prev_et,invert);
+            ctx.stroke();
+        }
+        await sleep(17);
+    }
+
+    ctx.strokeStyle = MAROON;
+    ctx.beginPath();
+    ctx.arc(x,y,r,stroke.start,stroke.end);
+    ctx.stroke();
+    await sleep(17);
+}
+
+async function animate_line(ctx, stroke, pps) {
+    var prev_sx = 0;
+    var prev_sy = 0;
+    var prev_ex = 0;
+    var prev_ey = 0;
+    var len = Math.sqrt((stroke.sx-stroke.x)**2 + (stroke.sy-stroke.y)**2);
+    var pixels_per_frame = pps/30;
+    if (pixels_per_frame < 3) pixels_per_frame = 3;
+    var steps = Math.floor(len/pixels_per_frame);
+    var step_x = (stroke.x - stroke.sx)/steps;
+    var step_y = (stroke.y - stroke.sy)/steps;
+    for (var i = 0; i < steps; i++) {
+        if (i == 0) {
+            prev_sx = stroke.sx;
+            prev_sy = stroke.sy;
+            prev_ex = prev_sx+step_x;
+            prev_ey = prev_sy+step_y;
+            ctx.strokeStyle = CRIMSON;
+            ctx.beginPath();
+            ctx.moveTo(prev_sx,prev_sy);
+            ctx.lineTo(prev_ex,prev_ey);
+            ctx.stroke();
+        } else {
+            ctx.strokeStyle = MAROON;
+            ctx.beginPath();
+            ctx.moveTo(prev_sx,prev_sy);
+            ctx.lineTo(prev_ex,prev_ey);
+            ctx.stroke();
+            prev_sx = prev_ex;
+            prev_sy = prev_ey;
+            prev_ex += step_x;
+            prev_ey += step_y;
+            ctx.strokeStyle = CRIMSON;
+            ctx.beginPath();
+            ctx.moveTo(prev_sx,prev_sy);
+            ctx.lineTo(prev_ex,prev_ey);
+            ctx.stroke();
+        }
+        await sleep(33);
+    }
+    ctx.strokeStyle = MAROON
+    ctx.beginPath();
+    ctx.moveTo(stroke.sx,stroke.sy);
+    ctx.lineTo(stroke.x,stroke.y);
+    ctx.stroke();
+
+    await sleep(33);
+}
+async function animate(ctx, stroke, pps) {
+    if (stroke.type == "line") {
+        await animate_line(ctx,stroke,pps);
+    } else {
+        await animate_arc(ctx,stroke,pps);
+    }
+}
+
+class Animator {
+    constructor(context) {
+        this.ctx = context;
+        this.current_animation = []; //The current animation to be played
+        this.x = 0.0;
+        this.y = 0.0;
+        this.empty = true;
+    }
+
+    begin() {
+        this.x = 0.0;
+        this.y = 0.0;
+        this.current_animation = [];
+        this.empty = true;
+    }
+
+    moveTo(x, y) {
+        this.x = x;
+        this.y = y;
+        this.empty = false;
+    }
+    arc(x,y,radius,start,end,ccw) {
+        //Put in the current animation with those exact arguments
+        var difx = this.x - radius * Math.cos(start);
+        var dify = this.y - radius * Math.sin(start);
+        if (!this.empty && (Math.abs(difx) > 1 || Math.abs(dify) > 1)) {
+            this.lineTo(x + radius * Math.cos(start), y + radius * Math.sin(start));
+        }
+        var anim = {
+            type: "arc",
+            x: x,
+            y: y,
+            radius: radius,
+            start: start,
+            end: end,
+            sx: this.x,
+            sy: this.y
+        }
+        this.current_animation.push(anim);
+        this.x = x + radius * Math.cos(end);
+        this.y = y + radius * Math.sin(end);
+        this.empty = false;
+    }
+    lineTo(x,y) {
+        var anim = {
+            type: "line",
+            x: x,
+            y: y,
+            sx: this.x,
+            sy: this.y,
+        }
+        this.current_animation.push(anim);
+        this.x = x;
+        this.y = y;
+        this.empty = false;
+    }
+
+
+    async end(pixels_per_second) {
+        for (var i = 0; i < this.current_animation.length; i++) 
+            await animate(this.ctx, this.current_animation[i], pixels_per_second)
+        this.x = 0.0;
+        this.y = 0.0;
+        this.current_animation = [];
+        this.empty = true;
+    }
+}
 function triplets(word) {
     var triples = []
     var current_triple = "";
@@ -383,7 +568,7 @@ function splitRunes(runes) {
 }
 
 
-function createSigil() {
+async function createSigil() {
     var canvas = document.getElementById('canvas')
     var condition = document.getElementById('condition').value;
     var condition_runes = splitRunes(condition);
@@ -391,6 +576,7 @@ function createSigil() {
     var action_runes = splitRunes(action);
     if (canvas.getContext) {
         var ctx = canvas.getContext('2d');
+        var anim = new Animator(ctx);
         ctx.fillStyle = 'rgb(0,0,0)';
         ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.strokeStyle = 'rgb(153,0,0)';
@@ -420,31 +606,32 @@ function createSigil() {
         var radial_percentage = 2 * Math.PI * percentage;
         var CONDITION_START = -Math.PI/2 - (radial_percentage/2) - 0.01;
         ctx.lineWidth = 7 * scale;
-        ctx.beginPath();
         if (!oversized) {
-            ctx.arc(center,center,radius_outer,CONDITION_START,CONDITION_START+Math.PI*2);
-            ctx.arc(center,center,radius_inner,CONDITION_START,CONDITION_START+Math.PI*2);
+            // ctx.beginPath();
+            anim.begin();
+            anim.arc(center,center,radius_outer,CONDITION_START,CONDITION_START+Math.PI*2);
+            anim.arc(center,center,radius_inner,CONDITION_START,CONDITION_START+Math.PI*2);
+            // ctx.stroke();
+            await anim.end(750);
         } else {
             // var percentage = (width_spaced * (condition_runes.length))/circumsigil;
             var end = CONDITION_START + radial_percentage + 0.02;
-            ctx.arc(center,center,radius_outer,CONDITION_START, end);
-            ctx.arc(center,center,radius_center,end,CONDITION_START);
-            ctx.arc(center,center,radius_outer,CONDITION_START,end,true);
-            ctx.arc(center,center,radius_inner,end,CONDITION_START);
-            ctx.arc(center,center,radius_outer,CONDITION_START, end);
-            ctx.arc(center,center,radius_inner,end,CONDITION_START,true);
+            // ctx.beginPath();
+            anim.begin();
+            anim.arc(center,center,radius_outer,CONDITION_START, end);
+            anim.arc(center,center,radius_center,end,CONDITION_START);
+            anim.moveTo(center + radius_outer * Math.cos(end), center + radius_outer * Math.sin(end));
+            anim.arc(center,center,radius_outer,end,CONDITION_START+2*Math.PI);
+            anim.arc(center,center,radius_inner,CONDITION_START,end);
+            anim.moveTo(center + radius_center * Math.cos(end), center + radius_center * Math.sin(end));
+            anim.arc(center,center,radius_inner,end,CONDITION_START+2*Math.PI);
+            // ctx.stroke();
+            await anim.end(750);
         }
-        ctx.stroke();
-        ctx.lineWidth = 3 * scale;
         //for testing reasons
         // ctx.strokeStyle = 'rgb(255,255,255)';
         var current_angle = CONDITION_START + step_angle/2 + 0.01;
         var tick_angle = current_angle+step_angle/2;
-        for (var i = 0; i < condition_runes.length; i++) {
-            var rune = condition_runes[i];
-            drawRadialRune(ctx, rune, radius_center, center, current_angle, true_width);
-            current_angle += step_angle;
-        }
         var tick_start = radius_outer - (0.4 * maximum_width_outer);
         ctx.lineWidth = 4 * scale;
         for (var i = 0; i < condition_runes.length - 1; i++) {
@@ -454,11 +641,17 @@ function createSigil() {
             var ey = radius_outer * sin + center;
             var sx = tick_start * cos + center;
             var sy = tick_start * sin + center;
-            ctx.beginPath();
-            ctx.moveTo(sx,sy);
-            ctx.lineTo(ex,ey)
-            ctx.stroke();
+            anim.begin();
+            anim.moveTo(sx,sy);
+            anim.lineTo(ex,ey)
+            await anim.end(1);
             tick_angle += step_angle;
+        }
+        ctx.lineWidth = 3 * scale;
+        for (var i = 0; i < condition_runes.length; i++) {
+            var rune = condition_runes[i];
+            await drawRadialRune(anim, rune, radius_center, center, current_angle, true_width);
+            current_angle += step_angle;
         }
         ctx.lineWidth = 5 * scale;
         var N = action_runes.length;
@@ -471,23 +664,17 @@ function createSigil() {
         // var size2 = size * RUNE_MARGIN;
         var x_start = center - (width/2) + (size/2);
         var x = x_start;
-        for (var i = 0; i < action_runes.length; i++) {
-            drawLinearRune(ctx,action_runes[i],size, x, center);
-            x += size;
-        }
-        //Idea a toothlike thing
-        ctx.lineWidth = 5 * scale;
         var y0 = center - (height/2) - (5 * scale/2);
         var y1 = center + (height/2) + (5 * scale/2);
         var x0 = center - (width/2) - (5 * scale/2);
         var x1 = center + (width/2) + (5 * scale/2);
-        ctx.beginPath();
-        ctx.moveTo(x0,y0);
-        ctx.lineTo(x1,y0);
-        ctx.lineTo(x1,y1);
-        ctx.lineTo(x0,y1);
-        ctx.lineTo(x0,y0);
-        ctx.stroke();
+        anim.begin();
+        anim.moveTo(x0,y0);
+        anim.lineTo(x1,y0);
+        anim.lineTo(x1,y1);
+        anim.lineTo(x0,y1);
+        anim.lineTo(x0,y0);
+        await anim.end(750);
         //Now draw the 2 marks on the side and the n marks on the top and bottom
         var offy = height/3;
         var offx = width/N;
@@ -498,30 +685,36 @@ function createSigil() {
             var yy = ((tooth_start_y)-center);
             var xa = radius_inner*Math.sqrt(1 - yy*yy/rad_squared) + center;
             var xb = -radius_inner*Math.sqrt(1 - yy*yy/rad_squared) + center;
-            ctx.beginPath();
-            ctx.moveTo(x1,tooth_start_y);
-            ctx.lineTo(xa,tooth_start_y);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(x0,tooth_start_y);
-            ctx.lineTo(xb,tooth_start_y)
-            ctx.stroke();
+            anim.begin();
+            anim.moveTo(x1,tooth_start_y);
+            anim.lineTo(xa,tooth_start_y);
+            await anim.end(750);
+            anim.begin();
+            anim.moveTo(x0,tooth_start_y);
+            anim.lineTo(xb,tooth_start_y)
+            await anim.end(750);
             tooth_start_y += offy;
         }
         for (var i = 0; i < N-1; i++) {
             var xx = ((tooth_start_x)-center);
             var ya = radius_inner*Math.sqrt(1 - xx*xx/rad_squared) + center;
             var yb = -radius_inner*Math.sqrt(1 - xx*xx/rad_squared) + center;
-            ctx.beginPath();
-            ctx.moveTo(tooth_start_x, y1);
-            ctx.lineTo(tooth_start_x, ya);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(tooth_start_x, y0);
-            ctx.lineTo(tooth_start_x, yb);
-            ctx.stroke();
+            anim.begin();
+            anim.moveTo(tooth_start_x, y1);
+            anim.lineTo(tooth_start_x, ya);
+            await anim.end(750);
+            anim.begin();
+            anim.moveTo(tooth_start_x, y0);
+            anim.lineTo(tooth_start_x, yb);
+            await anim.end(750);
             tooth_start_x += offx;
         }
+        for (var i = 0; i < action_runes.length; i++) {
+            await drawLinearRune(anim,action_runes[i],size, x, center);
+            x += size;
+        }
+        //Idea a toothlike thing
+        
     }
 }
 
@@ -548,12 +741,12 @@ function breakupRune(rune) {
     return sub_runes;
 }
 
-function drawRadialRune(ctx, rune, radius, center, angle, size) {
+async function drawRadialRune(ctx, rune, radius, center, angle, size) {
     var sub_runes = breakupRune(rune);
     var top = radius + size;
     var rad = top;
     for (var i = 0; i < sub_runes.length; i++) {
-        drawRadialSubRune(ctx,sub_runes[i],rad,center,angle,size);
+        await drawRadialSubRune(ctx,sub_runes[i],rad,center,angle,size);
         rad -= size;
     }
 }
@@ -584,25 +777,25 @@ function getRadialPoint(radius, center, angle, size, x, y) {
     };
 }
 
-function drawRadialSubRune(ctx, subrune, radius, center, angle, size) {
+async function drawRadialSubRune(anim, subrune, radius, center, angle, size) {
     if (subrune != ' ') {
         if (font[subrune] == undefined || font[subrune].length == 0) {
-            ctx.beginPath();
+            anim.begin();
             var a = getRadialPoint(radius,center,angle,size,0,0);
             var b = getRadialPoint(radius,center,angle,size,0,1);
             var c = getRadialPoint(radius,center,angle,size,1,1);
             var d = getRadialPoint(radius,center,angle,size,1,0);
-            ctx.moveTo(a.x,a.y);
-            ctx.lineTo(b.x,b.y);
-            ctx.lineTo(c.x,c.y);
-            ctx.lineTo(d.x,d.y);
-            ctx.lineTo(a.x,a.y);
-            ctx.stroke();
+            anim.moveTo(a.x,a.y);
+            anim.lineTo(b.x,b.y);
+            anim.lineTo(c.x,c.y);
+            anim.lineTo(d.x,d.y);
+            anim.lineTo(a.x,a.y);
+            anim.end(50);
         } else {
             var char = font[subrune];
             for (var i = 0; i < char.length; i++) {
                 var stroke = char[i];
-                ctx.beginPath();
+                await anim.begin();
                 if (stroke.type == "arc") {
                     var _center = getRadialPoint(radius,center,angle,size,stroke.x,stroke.y);
                     var theta = (-(stroke.theta-90))*Math.PI/180;
@@ -610,51 +803,50 @@ function drawRadialSubRune(ctx, subrune, radius, center, angle, size) {
                     var ccw = len < 0;
                     theta += angle;
                     if (ccw) {
-                        ctx.arc(_center.x,_center.y,stroke.radius*size,theta+len,theta);
+                        anim.arc(_center.x,_center.y,stroke.radius*size,theta+len,theta);
                     } else {
-                        ctx.arc(_center.x,_center.y,stroke.radius*size,theta,theta+len);
+                        anim.arc(_center.x,_center.y,stroke.radius*size,theta,theta+len);
                     }
                 } else if (stroke.type == "line") {
                     var start = getRadialPoint(radius,center,angle,size,stroke.x0,stroke.y0);
                     var end = getRadialPoint(radius,center,angle,size,stroke.x1,stroke.y1);
-                    ctx.moveTo(start.x,start.y);
-                    ctx.lineTo(end.x,end.y);
+                    anim.moveTo(start.x,start.y);
+                    anim.lineTo(end.x,end.y);
                 }
-                ctx.stroke();
+                await anim.end(50);
             }
         }
     }
 }
 
-function drawLinearRune(ctx, rune, size, x, y) {
+async function drawLinearRune(ctx, rune, size, x, y) {
     var sub_runes = breakupRune(rune);
     var top = y - size;
     for (var i = 0; i < sub_runes.length; i++) {
-        drawLinearSubRune(ctx,sub_runes[i],size,x,top);
+        await drawLinearSubRune(ctx,sub_runes[i],size,x,top);
         top += size;
     }
 }
 
-function  drawLinearSubRune(ctx, subrune, size, x, y) {
-    console.log(subrune);
+async function  drawLinearSubRune(anim, subrune, size, x, y) {
     if (subrune != ' ') {
         if (font[subrune] == undefined || font[subrune].length == 0) {
             var x0 = x - size/2;
             var x1 = x + size/2;
             var y0 = y - size/2;
             var y1 = y + size/2;
-            ctx.beginPath();
-            ctx.moveTo(x0,y0);
-            ctx.lineTo(x1,y0);
-            ctx.lineTo(x1,y1);
-            ctx.lineTo(x0,y1);
-            ctx.lineTo(x0,y0);
-            ctx.stroke();
+            anim.begin();
+            anim.moveTo(x0,y0);
+            anim.lineTo(x1,y0);
+            anim.lineTo(x1,y1);
+            anim.lineTo(x0,y1);
+            anim.lineTo(x0,y0);
+            await anim.end(300);
         } else {
             var char = font[subrune];
             for (var i = 0; i < char.length; i++) {
                 var stroke = char[i];
-                ctx.beginPath();
+                anim.begin();
                 if (stroke.type == "arc") {
                     // var _center = getRadialPoint(radius,center,angle,size,stroke.x,stroke.y);
                     var _x = (stroke.x - 0.5)*size + x;
@@ -663,21 +855,20 @@ function  drawLinearSubRune(ctx, subrune, size, x, y) {
                     var len = (-stroke.length)*Math.PI/180;
                     var ccw = len < 0;
                     if (ccw) {
-                        ctx.arc(_x,_y,stroke.radius*size,theta+len,theta);
+                        anim.arc(_x,_y,stroke.radius*size,theta+len,theta);
                     } else {
-                        ctx.arc(_x,_y,stroke.radius*size,theta,theta+len);
+                        anim.arc(_x,_y,stroke.radius*size,theta,theta+len);
                     }
                 } else if (stroke.type == "line") {
-                    console.log(stroke);
                     var sx = (stroke.x0 - 0.5)*size + x;
                     var sy = -(stroke.y0 - 0.5)*size + y;
                     var ex = (stroke.x1 - 0.5)*size+x;
                     var ey = -(stroke.y1 - 0.5)*size+y;
                     console.log("LINE: ", sx,sy,ex,ey)
-                    ctx.moveTo(sx,sy);
-                    ctx.lineTo(ex,ey);
+                    anim.moveTo(sx,sy);
+                    anim.lineTo(ex,ey);
                 }
-                ctx.stroke();
+                await anim.end(300);
             }
         }
     }
