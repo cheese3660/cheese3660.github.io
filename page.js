@@ -7,7 +7,7 @@ function clear() {
     }
 }
 
-const CONDITION_START = -3*Math.PI/4;
+// const CONDITION_START = -3*Math.PI/4;
 const RUNE_MARGIN = 1.05;
 var font = {};
 fetch("https://raw.githubusercontent.com/cheese3660/cheese3660.github.io/main/font.json")
@@ -370,7 +370,7 @@ function triplets(word) {
 }
 function splitRunes(runes) {
     runes = runes.toUpperCase();
-    var new_runes = []
+    var new_runes = [];
     runes.split(/(\s)/).forEach(
         element => {
             if (element.length > 0) {
@@ -381,6 +381,7 @@ function splitRunes(runes) {
     );
     return new_runes;
 }
+
 
 function createSigil() {
     var canvas = document.getElementById('canvas')
@@ -415,15 +416,17 @@ function createSigil() {
         var radius_center = (radius_outer + radius_inner) / 2;
         var step_size = width_spaced/circumsigil;
         var step_angle = 2*Math.PI*step_size;
+        var percentage = (width_spaced * (condition_runes.length))/circumsigil;
+        var radial_percentage = 2 * Math.PI * percentage;
+        var CONDITION_START = -Math.PI/2 - (radial_percentage/2) - 0.01;
         ctx.lineWidth = 7 * scale;
         ctx.beginPath();
         if (!oversized) {
             ctx.arc(center,center,radius_outer,CONDITION_START,CONDITION_START+Math.PI*2);
             ctx.arc(center,center,radius_inner,CONDITION_START,CONDITION_START+Math.PI*2);
         } else {
-            var percentage = (width_spaced * (condition_runes.length))/circumsigil;
-            var offset = 2*Math.PI * percentage;
-            var end = CONDITION_START + offset + 0.02;
+            // var percentage = (width_spaced * (condition_runes.length))/circumsigil;
+            var end = CONDITION_START + radial_percentage + 0.02;
             ctx.arc(center,center,radius_outer,CONDITION_START, end);
             ctx.arc(center,center,radius_center,end,CONDITION_START);
             ctx.arc(center,center,radius_outer,CONDITION_START,end,true);
