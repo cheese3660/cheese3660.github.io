@@ -3,23 +3,370 @@
 
 <head>
     <meta charset="utf-8" />
-    <script src="./page.js"></script>
+    <link rel="stylesheet" type="text/css" href="./style.css">
 </head>
 
-<body onload="clear();">
-    <div id="input_div">
-        <p>Condition:</p>
-        <input type="text" id="condition" value = "when interacted with">
-        <p>Action:</p>
-        <input type="text" id="action" value = "explode">
-    </div>
-    <div id="button_div">
-        <button type="button" onclick="createSigil();">Create Sigil</button>
-    </div>
-    <div id="canvas_div">
-        <canvas id="canvas" width=1024 height=1024>
-            Resulting Sigil
-        </canvas>
+<body>
+    <div id="content">
+        <h1>Lexi's Portfolio</h1>
+        <div class="section">
+            <h2>Introduction</h2>
+            <img src="./lexi.jpg" width="50%" style="border: 2px solid darkgreen; border-radius: 2.5%;" />
+            <div class="body-row">
+                <div>
+                    <h3>Name</h3>
+                </div>
+                <div>
+                    <h3>Lexi Allen</h3>
+                </div>
+                <div>
+                    <h3>Pronouns</h3>
+                </div>
+                <div>
+                    <h3>She/They</h3>
+                </div>
+                <div>
+                    <h3>Age</h3>
+                </div>
+                <div>
+                    <h3>22 Years</h3>
+                </div>
+                <div>
+                    <h3>Location</h3>
+                </div>
+                <div>
+                    <h3>Georgia, United States</h3>
+                </div>
+                <div>
+                    <h3>Studying</h3>
+                </div>
+                <div>
+                    <h3>Computer Engineering</h3>
+                </div>
+                <div>
+                    <h3>Last Updated</h3>
+                </div>
+                <div>
+                    <h3>November 9th, 2025</h3>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>FPGA Related Projects</h2>
+            <div class="body-row">
+                <div>
+                    <h3>Basys-3d</h3>
+                </div>
+                <div>
+                    <h3>
+                        A very basic fixed function GPU/rendering pipeline on a Basys 3 FPGA Development Board, using
+                        fixed point numbers for vertice positions and lighting/color calculations
+                        <br>
+                        Able to render as many polygons as can fit in RAM at higher than 60 FPS
+                    </h3>
+                    <video src="./blahaj_spin.mp4" class="project-embed" controls>A 3D rendering of a shark spinning
+                        from the FPGA VGA output</video>
+                    <h3>
+                        <a href="https://github.com/cheese3660/basys-3d" class="project-button">GitHub Link (VHDL
+                            Code)</a>
+                        <br>
+                        <a href="https://github.com/cheese3660/basys-3d-tools" class="project-button">GitHub Link (Tools
+                            for interfacing with the board)</a>
+                        <p class="note">Note: I wrote this contemporaneous with the previous repositoty, the date of the repository is incorrect.</p>
+                    </h3>
+                </div>
+                <div>
+                    <h3>Vpe Serial Transciever</h3>
+                </div>
+                <div>
+                    <h3>
+                        An implementation of a single wire serial data transmission protocol called "Vpe" or Variable
+                        Pulse Encoding,
+                        with a variable pulse width set by the length of the first pulse, where the symbols sent are
+                        encoded by a certain number of time frames low, followed by a certain number high.
+                        The length of the time frame being set by the first pulse in a data frame.
+
+                        Was able to hit the theoretical maximum data transfer rate with this board and design, around
+                        10x slower than the clock rate of the board.
+                    </h3>
+
+                    <h3>
+                        <a href="https://github.com/cheese3660/cpe-4490-final" class="project-button">GitHub Link (VHDL
+                            Code and python code for interfacing with the board)</a>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Senior Project (WIP)</h2>
+            <div class="body-row">
+                <div>
+                    <h3>Project Name</h3>
+                </div>
+                <div>
+                    <h3>Aether Table</h3>
+                </div>
+                <div>
+                    <h3>Project Description</h3>
+                </div>
+                <div>
+                    <h3>
+                        A modular display system meant to be placed on top of a table for tabletop roleplaying game
+                        sessions, used for displaying things like maps, and tokens on top of those maps.<br>
+                        Will automatically reconfigure the display positioning when the displays that are part of it are
+                        moved around in relation to eachother, using hall effect sensors and electromagnets.<br>
+                        It will also have a web app for both gamemasters and players to interact with the display, and
+                        store character/npc information for ease of access.<br>
+                        In essence, it is bringing the features of a virtual table top onto a physical tabletop.<br>
+                    </h3>
+                </div>
+                <div>
+                    <h3>Proof of concept demonstration</h3>
+                </div>
+                <div>
+                    <h3>This video shows a demonstration of the aforementioned reconfiguring capabilities of the project
+                        using hall effect sensors.</h3>
+                    <video src="./aether_table_demonstration.mp4" class="project-embed" controls>A demonstration of the
+                        auto reconfiguring capabilities of the aether table</video>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>KSP2 Modding Related Projects</h2>
+            <div class="body-row">
+                <div>
+                    <h3>SpaceWarp</h3>
+                </div>
+                <div>
+                    <h3>
+                        I am the lead maintainer of the modloader project for KSP2 known as Space Warp, it is built off
+                        of BepInEx, but on top of that provides many KSP2 Specific Utilities for modding.
+                        And it has been used in the creation of the majority of mods for KSP2.
+                    </h3>
+                    <a href="https://github.com/SpaceWarpDev/SpaceWarp/" class="project-button">GitHub Link</a>
+                </div>
+
+                <div>
+                    <h3>SpaceWarp.Template Pipelines</h3>
+                </div>
+                <div>
+                    <h3>
+                        I was involved in the creation of the modding template for SpaceWarp, a project that has made it
+                        quite easy for anyone to create a repository from the template, and create their own mods.
+
+                        My specific involvement here was the addition of release pipelines for GitHub that automated the
+                        process uploading the built mod files and pushing them to SpaceDock, a mod distribution site for
+                        KSP1/2.
+                    </h3>
+                    <a href="https://github.com/SpaceWarpDev/SpaceWarp.Template/" class="project-button">GitHub Link</a>
+                </div>
+
+                <div>
+                    <h3>KSP2 Unity Tools</h3>
+                </div>
+                <div>
+                    <h3>KSP2Unity Tools is a unity based SDK for creating parts and other assets for KSP2 mods, it also
+                        includes a lot of utilities like custom editors for common types, and a build/test pipeline to
+                        easily test your mod.</h3>
+                    <h3>With my work for it for KSP2 Redux, it becomes the fully featured SDK for creating all types of
+                        mods, and can test the mods in the editor being able to load mod dependencies in the editor as
+                        well.</h3>
+
+                    <a href="https://github.com/KSP2Community/KSP2UnityTools" class="project-button">GitHub Link</a>
+                </div>
+
+                <div>
+                    <h3>Patch Manager</h3>
+                </div>
+                <div>
+                    <h3>
+                        Patch Manager is a spiritual successor to Module Manager, allowing modders to patch any JSON
+                        definition within KSP2 using a bespoke SCSS based DSL for writing the patches.
+                        It is used in many KSP2 mods that need to add stuff to the tech tree or parts or in basically
+                        any place.
+                    </h3>
+
+                    <a href="https://ksp2community.github.io/PatchManagerDocs/overview.html"
+                        class="project-button">Documentation of the language</a>
+                    <br>
+                    <a href="https://github.com/ksp2community/patchmanager" class="project-button">GitHub Link</a>
+                </div>
+
+                <div>
+                    <h3>KSP2 Redux</h3>
+                </div>
+                <div>
+                    <h3>KSP2 is a comprehensive mod update/overhaul of KSP2 with the aim of bringing the community
+                        features that were promised for KSP2 before it was abandoned.</h3>
+                    <br>
+                    <h3>
+                        I am one of the leads on this project, my role being to integrate the modloader into the game,
+                        which is based off of Space Warp, and to then also update all the modding tools for use with
+                        KSP2 Redux, and make them nicer to use.</h3>
+
+                    <br>
+                    <h3>
+                        For example: I have implemented a completely custom mission editor for the KSP2 Redux version of
+                        KSP2UnityTools.
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Other Modding Projects</h2>
+            <div class="body-row">
+                <div>
+                    <h3>KSA Loader</h3>
+                </div>
+                <div>
+                    <h3>KSA Loader is a very simple harmony based mod injector for the in development game "Kitten Space
+                        Agency".</h3>
+                    <a href="https://github.com/cheese3660/KSALoader" class="project-button">GitHub Link</a>
+                </div>
+
+                <div>
+                    <h3>Premonition</h3>
+                </div>
+                <div>
+                    <h3>
+                        Premonition is a Harmony inspired monkey patching library for C# modding purposes. It works
+                        using Mono.Cecil to rewrite methods in assemblies before they are loaded by the assembly loader.
+                        This provides a distinct benefit over Harmony as it can target many methods Harmony cannot, such
+                        as virtual base methods, or inline methods.
+                    </h3>
+                    <a href="https://github.com/cheese3660/Premonition" class="project-button">GitHub Link</a>
+                </div>
+                <div>
+                    <h3>Cheese Util Mod</h3>
+                </div>
+                <div>
+                    <h3>Cheese Util Mod is a mod for a game known as Logic World that provides a lot of utilities for
+                        people designing projects in there, like screens and memory storage. It is one of the most used
+                        mods for Logic World</h3>
+                    <a href="https://github.com/cheese3660/CheeseUtilMod/" class="project-button">GitHub Link</a>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Other Related Projects</h2>
+            <div class="body-row">
+                <div>
+                    <h3>CheesyRegex</h3>
+                </div>
+                <div>
+                    <h3>
+                        Cheesy Regex is a completely custom implementation of Compiled Regexes in C# that I wrote, it also has utilities for generating Mermaid diagrams from regexes. It uses the Cheese.IlGen library for C# dynamic IL generation that I wrote
+                    </h3>
+                    <a href="https://github.com/cheese3660/CheesyRegex/" class="project-button">GitHub Link</a>
+                        <p class="note">Note: The date of this repository is incorrect, I wrote this in November of 2024.</p>
+                </div>
+                
+                <div>
+                    <h3>Cheese.IlGen</h3>
+                </div>
+                <div>
+                    <h3>
+                        Cheese.IlGen is a library for dynamically generating C# IL using a builder pattern, for use with System.Reflection.Emit and dynamic assemblies.
+                    </h3>
+                    <a href="https://github.com/cheese3660/Cheese.IlGen/" class="project-button">GitHub Link</a>
+                </div>
+
+                <div>
+                    <h3>C3Cubed</h3>
+                </div>
+                <div>
+                    <h3>
+                        C3Cubed was a library written in C3 for generating QBE IR code for use in programming language implementation.
+                    </h3>
+                    <a href="https://github.com/cheese3660/c3cubed" class="project-button">GitHub Link</a>                    
+                </div>
+
+                <div>
+                    <h3>Lexi Fantasy CPUs</h3>
+                </div>
+                <div>
+                    <h3>
+                        This is a library for implmenting fantasy CPU emulators in Rust, it currently contains a reference implementation of a 6502 emulator.
+                    </h3>
+                    <a href="https://github.com/cheese3660/LexiFantasyCpus" class="project-button">GitHub Link</a>
+                    <p class="note">Note: The date of this repository is incorrect, I wrote this in April of 2025</p>
+                </div>
+
+                <div>
+                    <h3>Rust 6502 OS</h3>
+                </div>
+                <div>
+                    <h3>
+                        An OS written entirely in 6502 assembly for the project mentioned before this one, it is styled after dos and has fs routines and can load programs off of the disk.
+                    </h3>
+                    <a href="https://github.com/cheese3660/Rust6502OS" class="project-button">GitHub Link</a>
+                    <p class="note">Note: The date of this repository is incorrect, I wrote this in April of 2025</p>
+                </div>
+
+                <div>
+                    <h3>Noodle Processing Unit</h3>
+                </div>
+                <div>
+                    <h3>The Noodle Processing Unit was an 8 bit computer designed in a game/logic simulator known as Logic World, around October of 2021.</h3>
+                    <br>
+                    <h3>This video shows the Noodle Processing Unit doing the fibonacci sequence in hexadecimal</h3>
+                    <video class="project-embed" src="./npu_fibonacci.mp4" controls></video>
+                    <h3>The noodle processing unit from above</h3>
+                    <img src="./npu.png" class="project-embed"/>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>WIP/Old Projects</h2>
+            <div class="body-row">
+                <div>
+                    <h3>Blocks.Net</h3>
+                </div>
+                <div>
+                    <h3>Blocks.Net is a C# implementation of a Minecraft Server that I am working on with one other, it is meant to eschew the idea of "vanilla" minecraft and treat the server as a multiplayer game framework.</h3>
+                    
+                    <a href="https://github.com/asyncmeow/blocks.net/tree/cheese-networking" class="project-button">GitHub Link</a>
+                </div>
+
+                <div>
+                    <h3>Cheese Programming Language</h3>
+                </div>
+                <div>
+                    <h3>The Cheese Programming language is my own compiled programming language that I have been working on and off on in a while</h3>
+
+                    <a href="https://github.com/cheese3660/cheese_pl" class="project-button">GitHub Link</a>
+                    <p class="note">Note: I am currently designing a complete reimplementation, so this repository is quite old.</p>
+                </div>
+
+                <div>
+                    <h3>Cheddar os</h3>
+                </div>
+                <div>
+                    <h3>Cheddar OS is an x86 operating system that I was writing in C++</h3>
+                    <a href="https://github.com/cheese3660/cheddar-os">GitHub Link</a>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Other Experience</h2>
+            <div class="body-row">
+                <div>
+                    <h3>FRC</h3>
+                </div>
+                <div>
+                    <h3>I was a programmer on my highschools FRC team, mostly working with writing and tuning PIDs for the various subsystems.</h3>
+                </div>
+
+                <div>
+                    <h3>GTRI Internship</h3>
+                </div>
+                <div>
+                    <h3>
+                        I did an internship with the Georgia Tech Research Institute during highschool, for this internship we worked with a small robotic arm and an arduino, writing a USB serial protocol for it and implementing an inverse kinematics algorithm on it known as FABRIK.
+                    </h3>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 

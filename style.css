@@ -1,0 +1,78 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: black;
+    color: limegreen;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    width: 100vw;
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+#content {
+    text-align: center;
+    width: 75%;
+    border: 3px solid green;
+    padding: 0 0 0vw;
+}
+
+.section {
+    width: 100%;
+    border-bottom: 2px solid green;
+    border-top: 4px solid green;
+}
+
+.body-row {
+    border-top: 2px solid green;
+    flex-direction: row;
+    display: grid;
+    grid-template-columns: 25% 75%;
+}
+.body-row > * {
+    border: 2px solid green;
+    display: inline-block;
+    padding: 0.5em;
+}
+
+.section-header {
+    width: 100%;
+}
+
+a {
+    color: green;
+    padding: 1vh 0;
+    text-decoration: underline dotted;
+}
+
+a.project-button {
+    color: green;
+    padding: 0;
+    font-size: x-large;
+    /* text-decoration: underline dotted; */
+    text-decoration: none;
+}
+
+a.project-button:hover {
+    color: black;
+    background-color: green;
+}
+
+a.project-button.selected-button {
+    color: black;
+    background-color: green;
+}
+
+a.project-button.selected-button:hover {
+    color: darkgray;
+    background-color: darkgreen;
+}
+
+.project-embed {
+    width: 50%;
+}
+
+.note {
+    font-size: medium;
+}
